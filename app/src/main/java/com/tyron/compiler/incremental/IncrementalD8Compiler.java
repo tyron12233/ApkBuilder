@@ -33,7 +33,7 @@ public class IncrementalD8Compiler extends Compiler {
      
         List<String> args = new ArrayList<>();
         
-        args.add("--release");
+        args.add("--intermediate");
         args.add("--min-api"); 
         args.add(String.valueOf(mProject.getMinSdk()));
         args.add("--lib");

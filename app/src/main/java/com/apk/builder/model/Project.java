@@ -27,6 +27,8 @@ public class Project {
 	
 	private File mAssetsFile;
 	
+	private File mNativeFile;
+	
 	private Logger mLogger;
 	
 	public Project() {
@@ -111,6 +113,14 @@ public class Project {
 	
 	public void setAssetsFile(File file) {
 		mAssetsFile = file;
+	}
+	
+	public File getNativeLibrariesFile() {
+		return mNativeFile;
+	}
+	
+	public void setNativeLibraries(File file) {
+		mNativeFile = file;
 	}
 	
 	public Logger getLogger() {

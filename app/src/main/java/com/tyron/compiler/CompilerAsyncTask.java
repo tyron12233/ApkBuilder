@@ -1,20 +1,29 @@
 package com.tyron.compiler;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
+import android.content.Context;
+import android.app.Dialog;
+import android.app.AlertDialog;
+import android.util.Log;
+import android.view.View;
+import android.view.LayoutInflater;
 import android.widget.TextView;
+import android.net.Uri;
 
 import com.android.sdklib.build.ApkBuilder;
-import com.apk.builder.model.Library;
-import com.apk.builder.model.Project;
-import com.tyron.compiler.incremental.IncrementalD8Compiler;
-import com.tyron.compiler.incremental.IncrementalECJCompiler;
+import com.android.sdklib.build.ApkCreationException;
+import com.android.sdklib.build.DuplicateFileException;
+import com.android.sdklib.build.SealedApkException;
 
-import java.io.File;
+import com.apk.builder.R;
+import com.apk.builder.model.*;
+import com.tyron.compiler.exception.*;
+import com.tyron.compiler.incremental.IncrementalECJCompiler;
+import com.tyron.compiler.incremental.IncrementalD8Compiler;
+
 import java.lang.ref.WeakReference;
+import java.io.IOException;
+import java.io.File;
 
 public class CompilerAsyncTask extends AsyncTask<Project, String, CompilerResult> {
 	
@@ -86,6 +95,11 @@ public class CompilerAsyncTask extends AsyncTask<Project, String, CompilerResult
 			    builder.addResourcesFromJar(new File(library.getPath(), "classes.jar"));
 				
 				project.getLogger().d("APK Builder", "Adding resources of " + library.getName() + " to the APK");
+			}
+			
+			File nativeLibs = project.getNativeLibrariesFile();
+			if (nativeLibs != null && nativeLibs.exists()) {
+				builder.addNativeLibraries(nativeLibs);
 			}
 			builder.setDebugMode(false);
 			builder.sealApk();

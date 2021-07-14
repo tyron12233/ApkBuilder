@@ -42,6 +42,7 @@ import com.tyron.compiler.CompilerAsyncTask;
 
 import java.io.File;
 
+//TODO: imrpove this mess
 public class MainActivity extends AppCompatActivity {
 
 	private Toolbar _toolbar;
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
 	private TextView _drawer_textview4;
 	
 	private SharedPreferences pref;
+	private Logger mLogger;
 	
 	@Override
 	protected void onCreate(Bundle _savedInstanceState) {
@@ -256,6 +258,8 @@ public class MainActivity extends AppCompatActivity {
 				if (!android.text.TextUtils.isEmpty(assetsPath.getText().toString())) {
 					    project.setAssetsFile(new File(assetsPath.getText().toString()));
 				}
+				
+				project.setNativeLibraries(new File(nativeLibsPath.getText().toString()));
 				project.setLogger(mLogger);
 				project.setMinSdk(Integer.parseInt(minSdkValue.getText().toString()));
 				project.setTargetSdk(Integer.parseInt(maxSdkValue.getText().toString()));
@@ -351,9 +355,8 @@ public class MainActivity extends AppCompatActivity {
 		manifestPath.setText(pref.getString("manifestPath", ""));
 		et_output.setText(pref.getString("outputPath", ""));
 		localLibsPath.setText(pref.getString("libPath", ""));
-	}
-	private Logger mLogger;
-	{
+		assetsPath.setText(pref.getString("assetsPath", ""));
+		nativeLibsPath.setText(pref.getString("nativeLibsPath", ""));
 	}
 	
 	@Override
@@ -421,11 +424,18 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		pref.edit().putString("resPath", resPath.getText().toString()).commit();
-		pref.edit().putString("javaPath", javaPath.getText().toString()).commit();
-		pref.edit().putString("manifestPath", manifestPath.getText().toString()).commit();
-		pref.edit().putString("outputPath", et_output.getText().toString()).commit();
-		pref.edit().putString("libPath", localLibsPath.getText().toString()).commit();
+		
+		SharedPreferences.Editor editor = pref.edit();
+		
+		editor.putString("resPath", resPath.getText().toString());
+		editor.putString("javaPath", javaPath.getText().toString());
+		editor.putString("manifestPath", manifestPath.getText().toString());
+	    editor.putString("outputPath", et_output.getText().toString());
+		editor.putString("libPath", localLibsPath.getText().toString());
+		editor.putString("assetsPath", assetsPath.getText().toString());
+		editor.putString("nativeLibsPath", nativeLibsPath.getText().toString());
+		
+		editor.commit();
 	}
 	
 	@Override
