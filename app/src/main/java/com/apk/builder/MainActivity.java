@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.InputFilter;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -27,10 +26,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.apk.builder.logger.*;
+import com.apk.builder.logger.Logger;
 import com.apk.builder.model.Library;
 import com.apk.builder.model.Project;
-
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -41,8 +39,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.tyron.compiler.CompilerAsyncTask;
 
 import java.io.File;
+import java.util.Objects;
 
-//TODO: imrpove this mess
 public class MainActivity extends AppCompatActivity {
 
 	private Toolbar _toolbar;
@@ -74,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 	private SwitchMaterial proguard;
 	private TextInputLayout proguardRules;
 	private TextView txt_output;
-	private MaterialCardView cardview1;
+	private MaterialCardView cardview;
 	private MaterialButton run;
 	private TextInputEditText resPath;
 	private TextInputEditText javaPath;
@@ -134,25 +132,20 @@ public class MainActivity extends AppCompatActivity {
 		}
 	}
 	
-	private void initialize(Bundle _savedInstanceState) {
-		_app_bar = (AppBarLayout) findViewById(R.id._app_bar);
-		_coordinator = (CoordinatorLayout) findViewById(R.id._coordinator);
-		_toolbar = (Toolbar) findViewById(R.id._toolbar);
+	private void initialize(Bundle savedInstanceState) {
+		_app_bar = findViewById(R.id._app_bar);
+		_coordinator = findViewById(R.id._coordinator);
+		_toolbar = findViewById(R.id._toolbar);
 		setSupportActionBar(_toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
-		_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View _v) {
-				onBackPressed();
-			}
-		});
-		_drawer = (DrawerLayout) findViewById(R.id._drawer);
+		_toolbar.setNavigationOnClickListener(_v -> onBackPressed());
+		_drawer = findViewById(R.id._drawer);
 		ActionBarDrawerToggle _toggle = new ActionBarDrawerToggle(MainActivity.this, _drawer, _toolbar, R.string.app_name, R.string.app_name);
 		_drawer.addDrawerListener(_toggle);
 		_toggle.syncState();
 		
-		LinearLayout _nav_view = (LinearLayout) findViewById(R.id._nav_view);
+		LinearLayout _nav_view = findViewById(R.id.nav_view);
 		
 		scroll = findViewById(R.id.scroll);
 		base = findViewById(R.id.base);
@@ -178,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 		proguard = findViewById(R.id.proguard);
 		proguardRules = findViewById(R.id.proguardRules);
 		txt_output = findViewById(R.id.txt_output);
-		cardview1 = findViewById(R.id.cardview1);
+		cardview = findViewById(R.id.cardview);
 		run = findViewById(R.id.run);
 		resPath = findViewById(R.id.resPath);
 		javaPath = findViewById(R.id.javaPath);
@@ -198,75 +191,63 @@ public class MainActivity extends AppCompatActivity {
 		d8 = findViewById(R.id.d8);
 		proguardRulesPath = findViewById(R.id.proguardRulesPath);
 		recyclerview1 = findViewById(R.id.recyclerview1);
-		_drawer_base = (LinearLayout) _nav_view.findViewById(R.id.base);
-		_drawer_banner = (LinearLayout) _nav_view.findViewById(R.id.banner);
-		_drawer_linear1 = (LinearLayout) _nav_view.findViewById(R.id.linear1);
-		_drawer_linear2 = (LinearLayout) _nav_view.findViewById(R.id.linear2);
-		_drawer_linear3 = (LinearLayout) _nav_view.findViewById(R.id.linear3);
-		_drawer_linear4 = (LinearLayout) _nav_view.findViewById(R.id.linear4);
-		_drawer_imageview1 = (ImageView) _nav_view.findViewById(R.id.imageview1);
-		_drawer_textview1 = (TextView) _nav_view.findViewById(R.id.textview1);
-		_drawer_imageview2 = (ImageView) _nav_view.findViewById(R.id.imageview2);
-		_drawer_textview2 = (TextView) _nav_view.findViewById(R.id.textview2);
-		_drawer_imageview3 = (ImageView) _nav_view.findViewById(R.id.imageview3);
-		_drawer_textview3 = (TextView) _nav_view.findViewById(R.id.textview3);
-		_drawer_imageview4 = (ImageView) _nav_view.findViewById(R.id.imageview4);
-		_drawer_textview4 = (TextView) _nav_view.findViewById(R.id.textview4);
+		_drawer_base = _nav_view.findViewById(R.id.base);
+		_drawer_banner = _nav_view.findViewById(R.id.banner);
+		_drawer_linear1 = _nav_view.findViewById(R.id.linear1);
+		_drawer_linear2 = _nav_view.findViewById(R.id.linear2);
+		_drawer_linear3 = _nav_view.findViewById(R.id.linear3);
+		_drawer_linear4 = _nav_view.findViewById(R.id.linear4);
+		_drawer_imageview1 = _nav_view.findViewById(R.id.imageview1);
+		_drawer_textview1 = _nav_view.findViewById(R.id.textview1);
+		_drawer_imageview2 = _nav_view.findViewById(R.id.imageview2);
+		_drawer_textview2 = _nav_view.findViewById(R.id.textview2);
+		_drawer_imageview3 = _nav_view.findViewById(R.id.imageview3);
+		_drawer_textview3 = _nav_view.findViewById(R.id.textview3);
+		_drawer_imageview4 = _nav_view.findViewById(R.id.imageview4);
+		_drawer_textview4 = _nav_view.findViewById(R.id.textview4);
 		pref = getSharedPreferences("config", Activity.MODE_PRIVATE);
 		
-		material.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton _param1, boolean _param2)  {
-				final boolean _isChecked = _param2;
-				if (_isChecked) {
-					if (!appcompat.isChecked()) {
-						appcompat.setChecked(true);
-					}
+		material.setOnCheckedChangeListener((param1, param2) -> {
+			final boolean isChecked = param2;
+			if (isChecked) {
+				if (!appcompat.isChecked()) {
+					appcompat.setChecked(true);
 				}
 			}
 		});
 		
-		proguard.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton _param1, boolean _param2)  {
-				final boolean _isChecked = _param2;
-				if (_isChecked) {
-					proguardRules.setVisibility(View.VISIBLE);
-				}
-				else {
-					proguardRules.setVisibility(View.GONE);
-				}
+		proguard.setOnCheckedChangeListener((param1, param2) -> {
+			final boolean isChecked = param2;
+			if (isChecked) {
+				proguardRules.setVisibility(View.VISIBLE);
+			} else {
+				proguardRules.setVisibility(View.GONE);
 			}
 		});
 		
-		run.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View _view) {
-				SystemLogPrinter.start(mLogger);
-				
-				Project project = new Project();
-				project.setLibraries(Library.fromFile(new File(localLibsPath.getText().toString())));
-				
-				project.setResourcesFile(new File(resPath.getText().toString()));
-				
-				project.setOutputFile(new File(et_output.getText().toString()));
-				
-				project.setJavaFile(new File(javaPath.getText().toString()));
-				
-				project.setManifestFile(new File(manifestPath.getText().toString()));
-				
-				if (!android.text.TextUtils.isEmpty(assetsPath.getText().toString())) {
-					    project.setAssetsFile(new File(assetsPath.getText().toString()));
-				}
-				
-				project.setNativeLibraries(new File(nativeLibsPath.getText().toString()));
-				project.setLogger(mLogger);
-				project.setMinSdk(Integer.parseInt(minSdkValue.getText().toString()));
-				project.setTargetSdk(Integer.parseInt(maxSdkValue.getText().toString()));
-				CompilerAsyncTask task = new CompilerAsyncTask(MainActivity.this);
-				
-				task.execute(project);
+		run.setOnClickListener(_view -> {
+			SystemLogPrinter.start(mLogger);
+
+			Project project = new Project();
+			project.setLibraries(Library.fromFile(new File(localLibsPath.getText().toString())));
+
+			project.setResourcesFile(new File(resPath.getText().toString()));
+
+			project.setOutputFile(new File(et_output.getText().toString()));
+
+			project.setJavaFile(new File(javaPath.getText().toString()));
+
+			project.setManifestFile(new File(manifestPath.getText().toString()));
+
+			if (!android.text.TextUtils.isEmpty(assetsPath.getText().toString())) {
+					project.setAssetsFile(new File(assetsPath.getText().toString()));
 			}
+			project.setLogger(mLogger);
+			project.setMinSdk(Integer.parseInt(minSdkValue.getText().toString()));
+			project.setTargetSdk(Integer.parseInt(maxSdkValue.getText().toString()));
+			CompilerAsyncTask task = new CompilerAsyncTask(MainActivity.this);
+
+			task.execute(project);
 		});
 	}
 	
@@ -275,76 +256,42 @@ public class MainActivity extends AppCompatActivity {
 		proguardRules.setVisibility(View.GONE);
 		minSdkValue.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "30")});
 		maxSdkValue.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "30")});
-		res.setEndIconOnClickListener(new View.OnClickListener() {
-			    @Override
-			    public void onClick(View v) {
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){ 
-					    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE); 
-					    i.addCategory(Intent.CATEGORY_DEFAULT);
-					    startActivityForResult(Intent.createChooser(i, "Choose directory"), 0);
-				}
-				    }
+
+		res.setEndIconOnClickListener(v -> {
+			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+			i.addCategory(Intent.CATEGORY_DEFAULT);
+			startActivityForResult(Intent.createChooser(i, "Choose directory"), 0);
 		});
-		java.setEndIconOnClickListener(new View.OnClickListener() {
-			    @Override
-			    public void onClick(View v) {
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){ 
-					    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE); 
-					    i.addCategory(Intent.CATEGORY_DEFAULT);
-					    startActivityForResult(Intent.createChooser(i, "Choose directory"), 1);
-				}
-				    }
+		java.setEndIconOnClickListener(v -> {
+			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+			i.addCategory(Intent.CATEGORY_DEFAULT);
+			startActivityForResult(Intent.createChooser(i, "Choose directory"), 1);
 		});
-		manifest.setEndIconOnClickListener(new View.OnClickListener() {
-			    @Override
-			    public void onClick(View v) {
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){ 
-					    Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-					    chooseFile.setType("text/xml");
-					    chooseFile = Intent.createChooser(chooseFile, "Choose a file");
-					    startActivityForResult(chooseFile, 2);
-				}
-				    }
+		manifest.setEndIconOnClickListener(v -> {
+			Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+			chooseFile.setType("text/xml");
+			chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+			startActivityForResult(chooseFile, 2);
 		});
-		assets.setEndIconOnClickListener(new View.OnClickListener() {
-			    @Override
-			    public void onClick(View v) {
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){ 
-					    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE); 
-					    i.addCategory(Intent.CATEGORY_DEFAULT);
-					    startActivityForResult(Intent.createChooser(i, "Choose directory"), 3);
-				}
-				    }
+		assets.setEndIconOnClickListener(v -> {
+			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+			i.addCategory(Intent.CATEGORY_DEFAULT);
+			startActivityForResult(Intent.createChooser(i, "Choose directory"), 3);
 		});
-		nativeLibs.setEndIconOnClickListener(new View.OnClickListener() {
-			    @Override
-			    public void onClick(View v) {
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){ 
-					    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE); 
-					    i.addCategory(Intent.CATEGORY_DEFAULT);
-					    startActivityForResult(Intent.createChooser(i, "Choose directory"), 4);
-				}
-				    }
+		nativeLibs.setEndIconOnClickListener(v -> {
+			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+			i.addCategory(Intent.CATEGORY_DEFAULT);
+			startActivityForResult(Intent.createChooser(i, "Choose directory"), 4);
 		});
-		localLibs.setEndIconOnClickListener(new View.OnClickListener() {
-			    @Override
-			    public void onClick(View v) {
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){ 
-					    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE); 
-					    i.addCategory(Intent.CATEGORY_DEFAULT);
-					    startActivityForResult(Intent.createChooser(i, "Choose directory"), 5);
-				}
-				    }
+		localLibs.setEndIconOnClickListener(v -> {
+			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+			i.addCategory(Intent.CATEGORY_DEFAULT);
+			startActivityForResult(Intent.createChooser(i, "Choose directory"), 5);
 		});
-		til_output.setEndIconOnClickListener(new View.OnClickListener() {
-			    @Override
-			    public void onClick(View v) {
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){ 
-					    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE); 
-					    i.addCategory(Intent.CATEGORY_DEFAULT);
-					    startActivityForResult(Intent.createChooser(i, "Choose directory"), 6);
-				}
-				    }
+		til_output.setEndIconOnClickListener(v -> {
+			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+			i.addCategory(Intent.CATEGORY_DEFAULT);
+			startActivityForResult(Intent.createChooser(i, "Choose directory"), 6);
 		});
 		
 		mLogger = new Logger();
@@ -355,63 +302,62 @@ public class MainActivity extends AppCompatActivity {
 		manifestPath.setText(pref.getString("manifestPath", ""));
 		et_output.setText(pref.getString("outputPath", ""));
 		localLibsPath.setText(pref.getString("libPath", ""));
-		assetsPath.setText(pref.getString("assetsPath", ""));
-		nativeLibsPath.setText(pref.getString("nativeLibsPath", ""));
 	}
 	
+	
 	@Override
-	protected void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
-		super.onActivityResult(_requestCode, _resultCode, _data);
-		if(_resultCode == Activity.RESULT_OK) {
-		    switch (_requestCode) {
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(resultCode == Activity.RESULT_OK) {
+		    switch (requestCode) {
 		case ((int)0): {
-		    Uri uri = _data.getData(); 
+		    Uri uri = data.getData(); 
 		    File file = new File(uri.getPath());
 		    final String[] split = file.getPath().split(":");
-			resPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		break;
+		    resPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+		    break;
 		}
 		case ((int)1): {
-		    Uri uri = _data.getData(); 
+		    Uri uri = data.getData(); 
 		    File file = new File(uri.getPath());
 		    final String[] split = file.getPath().split(":");
-			javaPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		break;
+		    javaPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+		    break;
 		}	
-	   case ((int)2): {
-	        Uri uri = _data.getData(); 
+	        case ((int)2): {
+	            Uri uri = data.getData(); 
 		    File file = new File(uri.getPath());
 		    final String[] split = file.getPath().split(":");
 		    manifestPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		break;
+		    break;
 		}
 		case ((int)3): {
-		    Uri uri = _data.getData(); 
+		    Uri uri = data.getData(); 
 		    File file = new File(uri.getPath());
 		    final String[] split = file.getPath().split(":");
-			assetsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		break;
+		    assetsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+		    break;
 		}
 		case ((int)4): {
-		    Uri uri = _data.getData(); 
+		    Uri uri = data.getData(); 
 		    File file = new File(uri.getPath());
 		    final String[] split = file.getPath().split(":");
-			nativeLibsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		break;
+		    nativeLibsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+		    break;
 		}
 		case ((int)5): {
-		    Uri uri = _data.getData(); 
+		    Uri uri = data.getData(); 
 		    File file = new File(uri.getPath());
 		    final String[] split = file.getPath().split(":");
-			localLibsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+		    localLibsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
 		break;
 		}
 		case (6): {
-		    Uri uri = _data.getData(); 
+		    Uri uri = data.getData(); 
 		    File file = new File(uri.getPath());
 		    final String[] split = file.getPath().split(":");
-			et_output.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		break;
+		    et_output.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+		    break;
 		}
 	}
 			
@@ -424,18 +370,11 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		
-		SharedPreferences.Editor editor = pref.edit();
-		
-		editor.putString("resPath", resPath.getText().toString());
-		editor.putString("javaPath", javaPath.getText().toString());
-		editor.putString("manifestPath", manifestPath.getText().toString());
-	    editor.putString("outputPath", et_output.getText().toString());
-		editor.putString("libPath", localLibsPath.getText().toString());
-		editor.putString("assetsPath", assetsPath.getText().toString());
-		editor.putString("nativeLibsPath", nativeLibsPath.getText().toString());
-		
-		editor.commit();
+		pref.edit().putString("resPath", Objects.requireNonNull(resPath.getText()).toString()).apply();
+		pref.edit().putString("javaPath", Objects.requireNonNull(javaPath.getText()).toString()).apply();
+		pref.edit().putString("manifestPath", Objects.requireNonNull(manifestPath.getText()).toString()).apply();
+		pref.edit().putString("outputPath", Objects.requireNonNull(et_output.getText()).toString()).apply();
+		pref.edit().putString("libPath", Objects.requireNonNull(localLibsPath.getText()).toString()).apply();
 	}
 	
 	@Override
@@ -446,4 +385,5 @@ public class MainActivity extends AppCompatActivity {
 		else {
 			super.onBackPressed();
 		}
-	}}
+	}
+}
