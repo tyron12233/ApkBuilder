@@ -2,5 +2,27 @@
 	<string name="app_name" translatable="false">Apk Builder</string>
 	<string name="path_helper" translatable="false">Assets and Native Libs can be left empty</string>
 	<string name="libs_helper" translatable="false">The folder which contains all the libraries used by your project, See help for more info.</string>
+    <string name="project_settings">Project settings</string>
+	<string name="resourcepath">Resource Path</string>
+	<string name="javapath">Java Path</string>
+	<string name="androidmanifestpath">Android Manifest Path</string>
+	<string name="outputpath">Output Path</string>
+	<string name="assetspath">Assets Path</string>
+	<string name="nativelibspath">Native Libs Path</string>
+	<string name="library_settings">Library settings</string>
+	<string name="material">Material</string>
+	<string name="locallibspath">Local Libs Path</string>
+	<string name="build_settings">Build settings</string>
+	<string name="minsdk">Min SDK</string>
+	<string name="maxsdk">Max SDK</string>
+	<string name="java_version">Java version</string>
+	<string name="appcompat">App Compat</string>
+	<string name="dexer">Dexer</string>
+	<string name="string_fog">String fog</string>
+	<string name="r8_shrinker">R8 shrinker</string>
+	<string name="proguard">Proguard</string>
+	<string name="proguardrulespath">Proguard Rules Path</string>
+	<string name="output">Output</string>
+	<string name="run">Run</string>
 
 </resources>
