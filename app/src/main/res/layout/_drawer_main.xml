@@ -1,0 +1,126 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+	<LinearLayout
+		android:id="@+id/base"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+		<LinearLayout
+			android:id="@+id/banner"
+			android:layout_width="match_parent"
+			android:layout_height="200dp"
+			android:layout_marginBottom="10dp"
+			android:padding="8dp"
+			android:orientation="vertical"
+			android:background="@color/colorPrimary" />
+		<LinearLayout
+			android:id="@+id/linear1"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginTop="10dp"
+			android:layout_marginRight="10dp"
+			android:padding="8dp"
+			android:gravity="center_vertical"
+			android:orientation="horizontal">
+			<ImageView
+				android:id="@+id/imageview1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/icons8_ball_point_pen"
+				android:scaleType="center"
+				app:tint="@color/colorAccent" />
+			<TextView
+				android:id="@+id/textview1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="8dp"
+				android:text="Apk Signer"
+				android:textSize="14sp"
+				android:textColor="#000000" />
+		</LinearLayout>
+		<LinearLayout
+			android:id="@+id/linear2"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginTop="10dp"
+			android:layout_marginRight="10dp"
+			android:padding="8dp"
+			android:gravity="center_vertical"
+			android:orientation="horizontal">
+			<ImageView
+				android:id="@+id/imageview2"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/icons8_java_50"
+				android:scaleType="center"
+				app:tint="@color/colorAccent" />
+			<TextView
+				android:id="@+id/textview2"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="8dp"
+				android:text="Java to Smali"
+				android:textSize="14sp"
+				android:textColor="#000000" />
+		</LinearLayout>
+		<LinearLayout
+			android:id="@+id/linear3"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginTop="10dp"
+			android:layout_marginRight="10dp"
+			android:padding="8dp"
+			android:gravity="center_vertical"
+			android:orientation="horizontal">
+			<ImageView
+				android:id="@+id/imageview3"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/ic_settings_black"
+				android:scaleType="center"
+				app:tint="@color/colorAccent" />
+			<TextView
+				android:id="@+id/textview3"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="8dp"
+				android:text="Settings"
+				android:textSize="14sp"
+				android:textColor="#000000" />
+		</LinearLayout>
+		<LinearLayout
+			android:id="@+id/linear4"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginTop="10dp"
+			android:layout_marginRight="10dp"
+			android:padding="8dp"
+			android:gravity="center_vertical"
+			android:orientation="horizontal">
+			<ImageView
+				android:id="@+id/imageview4"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/ic_info_outline_black"
+				android:scaleType="center"
+				app:tint="@color/colorAccent" />
+			<TextView
+				android:id="@+id/textview4"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:padding="8dp"
+				android:text="About"
+				android:textSize="14sp"
+				android:textColor="#000000" />
+		</LinearLayout>
+	</LinearLayout>
+</LinearLayout>

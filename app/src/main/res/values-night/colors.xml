@@ -1,0 +1,15 @@
+<resources>
+	<color name="colorPrimary">#1F1F1F</color>
+	<color name="colorPrimaryDark">#000000</color>
+	<color name="colorAccent">#BB86FC</color>
+	<color name="colorControlHighlight">#EEEEEE</color>
+	<color name="colorControlNormal">#EEEEEE</color>
+	<color name="colorBackground">#121212</color>
+	<color name="colorSurface">#121212</color>
+	<color name="colorError">#CF6679</color>
+	<color name="colorOnPrimary">#000000</color>
+	<color name="colorOnSecondary">#000000</color>
+	<color name="colorOnBackground">#FFFFFF</color>
+	<color name="colorOnSurface">#FFFFFF</color>
+	<color name="colorOnError">#000000</color>
+</resources>
