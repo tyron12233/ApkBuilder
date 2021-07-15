@@ -30,7 +30,7 @@ public class ECJCompiler extends Compiler {
 	}
 	
 	@Override
-	public void prepare() {
+	public void prepare() throws CompilerException {
 		
 	}
 	
@@ -86,7 +86,7 @@ public class ECJCompiler extends Compiler {
 		main.compile(args.toArray(new String[0]));
 		
 		if (main.globalErrorsCount > 0) {
-			throw new CompilerException(errorOutputStream.buffer.toString());
+			throw new CompilerException("Compilation failed, check output for more details.");
 		}
 		
 	}

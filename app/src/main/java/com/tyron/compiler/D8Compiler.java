@@ -21,7 +21,7 @@ public class D8Compiler extends Compiler {
     }
     
     @Override
-    public void prepare() {
+    public void prepare() throws CompilerException {
     
     }
     
@@ -119,7 +119,9 @@ public class D8Compiler extends Compiler {
             if (file.isDirectory()) {
                 files.addAll(getClassFiles(file));
             } else {
-                files.add(file);
+			    if (file.getName().endsWith(".class")) {
+                    files.add(file);
+				}
             }
         }
         

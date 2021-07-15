@@ -36,7 +36,7 @@ public class AAPT2Compiler extends Compiler {
 	}
 	
     @Override
-    public void prepare() {
+    public void prepare() throws CompilerException {
 		mProject.getLogger().d(TAG, "Preparing");
 		onProgressUpdate("Preparing AAPT2...");
 		

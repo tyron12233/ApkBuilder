@@ -31,6 +31,8 @@ public class Project {
 	
 	private Logger mLogger;
 	
+	private ProjectSettings mProjectSettings;
+	
 	public Project() {
 		
 	}
@@ -129,5 +131,13 @@ public class Project {
 	
 	public void setLogger(Logger logger) {
 		mLogger = logger;
+	}
+	
+	public void setProjectSettings(ProjectSettings setting) {
+	    mProjectSettings = setting;
+	}
+	
+	public ProjectSettings getSettings() {
+	    return mProjectSettings;
 	}
 }

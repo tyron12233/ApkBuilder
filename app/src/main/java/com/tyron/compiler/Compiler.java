@@ -25,7 +25,7 @@ public abstract class Compiler {
 		}
 	}
 	
-	abstract public void prepare();
+	abstract public void prepare() throws CompilerException;
 	
 	abstract public void run() throws CompilerException, IOException;
 	

@@ -65,4 +65,8 @@ public class ApplicationLoader extends Application {
 		return stacktraceAsString;
 	}
 	
+	public static Context getContext() {
+	    return applicationContext;
+	}
+	
 }

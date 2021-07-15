@@ -302,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
 		manifestPath.setText(pref.getString("manifestPath", ""));
 		et_output.setText(pref.getString("outputPath", ""));
 		localLibsPath.setText(pref.getString("libPath", ""));
+		nativeLibsPath.setText(pref.getString("nativeLibsPath", ""));
 	}
 	
 	
@@ -370,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		pref.edit().putString("resPath", Objects.requireNonNull(resPath.getText()).toString()).apply();
+	 	pref.edit().putString("resPath", Objects.requireNonNull(resPath.getText()).toString()).apply();
 		pref.edit().putString("javaPath", Objects.requireNonNull(javaPath.getText()).toString()).apply();
 		pref.edit().putString("manifestPath", Objects.requireNonNull(manifestPath.getText()).toString()).apply();
 		pref.edit().putString("outputPath", Objects.requireNonNull(et_output.getText()).toString()).apply();
