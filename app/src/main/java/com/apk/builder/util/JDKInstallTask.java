@@ -3,7 +3,10 @@ package com.apk.builder.util;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.net.Uri;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+
+import com.apk.builder.logger.Logger;
 
 import org.apache.commons.compress.compressors.xz.*;
 import org.apache.commons.compress.*;
@@ -23,12 +26,14 @@ import static com.apk.builder.ApplicationLoader.getContext;
 public class JDKInstallTask extends AsyncTask<Uri, String, String> {
 	
 	private WeakReference<Context> ref;
+	private Logger mLogger;
 	
 	//TODO: replace dialog with a custom dialog
 	private ProgressDialog dialog;
 	
-	public JDKInstallTask(Context context) {
+	public JDKInstallTask(Context context, Logger logger) {
 		ref = new WeakReference<>(context);
+		mLogger = logger;
 	}
 	
 	@Override
@@ -46,6 +51,9 @@ public class JDKInstallTask extends AsyncTask<Uri, String, String> {
 		Uri uri = params[0];
 		
 		String name = null;
+		
+		mLogger.d("Extract", "Extracting to " + dest);
+		
 		try {
 			TarArchiveInputStream tarIn = null;
 			
@@ -64,6 +72,7 @@ public class JDKInstallTask extends AsyncTask<Uri, String, String> {
 					destPath.createNewFile();
 					
 					publishProgress("Extracting " + destPath.getName());
+					mLogger.d("Extract", "Extracting to: " + destPath);
 					//byte [] btoRead = new byte[(int)tarEntry.getSize()];
 					byte [] btoRead = new byte[1024];
 					//FileInputStream fin 
@@ -88,7 +97,11 @@ public class JDKInstallTask extends AsyncTask<Uri, String, String> {
 			File renameFile = new File(getContext().getFilesDir(), "openjdk");
 			renameFile.mkdirs();
 			
+			mLogger.d("Extract", "Creating file " + renameFile);
+			
 			new File(getContext().getFilesDir(), name).renameTo(renameFile);
+			
+			mLogger.d("Extract", "Renamed " + name + " to " + renameFile.getName());
 			
 			setAllExecutable(renameFile);
 			
@@ -107,10 +120,18 @@ public class JDKInstallTask extends AsyncTask<Uri, String, String> {
 	@Override
 	public void onPostExecute(String string) {
 		dialog.dismiss();
+		
+		AlertDialog.Builder ab = new AlertDialog.Builder(ref.get());
+		ab.setTitle("Result");
+		ab.setMessage(string);
+		ab.setPositiveButton("OK", null);
+		ab.create().show();
 	}
 	
 	private void setAllExecutable(File root) {
 		File[] childs = root.listFiles();
+		
+		//mLogger.d("Extract", "Setting all files as executable in " + root);
 		if (childs != null) {
 			for (File child: childs) {
 				if (child.isDirectory()) {

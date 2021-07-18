@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import java.io.IOException;
@@ -68,21 +69,24 @@ public class KotlinCompiler extends Compiler {
 		
 		mProject.getLogger().d(TAG, "Running...");
 		
-        StringBuilder args = new StringBuilder();
-        args.append(getContext().getFilesDir() + "/openjdk/bin/java ");
-        args.append("-jar ");
-        args.append(getContext().getFilesDir() + "/kotlinc/lib/kotlin-compiler.jar ");
-		args.append("-verbose ");
-        args.append("-classpath " + classpath() + " ");
-		args.append("-d " + mProject.getOutputFile() + "/bin/classes ");
-		args.append("-Xplugin=$KOTLIN_HOME/lib/compose-compiler-1.0.0.jar ");
+        List<String> args = new ArrayList();
+        args.add(getContext().getFilesDir() + "/openjdk/bin/java");
+        args.add("-jar");
+        args.add(getContext().getFilesDir() + "/kotlinc/lib/kotlin-compiler.jar");
+		args.add("-verbose");
+        args.add("-classpath");
+		args.add(classpath());
+		args.add("-d");
+		args.add(mProject.getOutputFile() + "/bin/classes");
+		
+		//args.append("-Xplugin=$KOTLIN_HOME/lib/compose-compiler-1.0.0.jar ");
 		//args.append("-Xplugin=$KOTLIN_HOME/lib/kotlin-annotation-processing.jar ");
 		//args.append("-P plugin:org.jetbrains.kotlin.kapt3:aptMode=aptAndStubs,");
 		//args.append("-P plugin:androidx.compose.compiler.plugins.kotlin:kotlinCompilerExtensionVersion=1.0.0-rc01 ");
 		
-		args.append(mProject.getJavaFile().getAbsolutePath());
+		args.add(mProject.getJavaFile().getAbsolutePath());
 		//args.append(" -P plugin:androidx.compose.compiler.plugins.kotlin:kotlinCompilerVersion=1.5.0 ");
-        pb.command("/system/bin/sh", "-c", args.toString());
+        pb.command(args);
         
         try {
             Process process = pb.start();

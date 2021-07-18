@@ -58,11 +58,13 @@ public class CompilerAsyncTask extends AsyncTask<Project, String, CompilerResult
 	        aapt2Compiler.prepare();
 	        aapt2Compiler.run();
 	        
-			if (project.getSettings().getBoolean(ProjectSettings.KOTLIN_ENABLED)) {
+			/*if (project.getSettings().getBoolean(ProjectSettings.KOTLIN_ENABLED)) {
 			    Compiler kotlinCompiler = new KotlinCompiler(project);
 			    kotlinCompiler.prepare();
 			    kotlinCompiler.run();
-			}
+			}*/
+			
+			
 			Compiler ecjCompiler = new ECJCompiler(project);
 			ecjCompiler.setProgressListener(args -> {
 				publishProgress(args);
