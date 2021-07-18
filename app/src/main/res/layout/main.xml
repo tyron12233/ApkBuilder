@@ -462,7 +462,8 @@
 						android:layout_marginBottom="10dp"
 						android:padding="8dp"
 						android:orientation="horizontal"
-						android:text="@string/run" />
+						android:text="@string/run"
+                                                android:textColor="@color/colorOnSurface" />
 				</LinearLayout>
 			</ScrollView>
 		</LinearLayout>
