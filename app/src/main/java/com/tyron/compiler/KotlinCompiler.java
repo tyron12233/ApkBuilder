@@ -40,7 +40,7 @@ public class KotlinCompiler extends Compiler {
         pb = new ProcessBuilder();
         Map<String, String> env = pb.environment();
         env.clear();
-        env.put("HOME", getContext().getFilesDir().getAbsolutePath());
+        env.put("HOME", getContext().getFilesDir().getAbsolutePath() + "/openjdk");
 		env.put("PATH", System.getenv("PATH"));
 		env.put("LANG", "en_US.UTF-8");
 		env.put("PWD", getContext().getFilesDir().getAbsolutePath());
@@ -50,6 +50,10 @@ public class KotlinCompiler extends Compiler {
 		env.put("EXTERNAL_STORAGE", System.getenv("EXTERNAL_STORAGE"));
 		env.put("JAVA_HOME", getContext().getFilesDir() + "/openjdk");
 		env.put("KOTLIN_HOME", getContext().getFilesDir() + "/kotlinc");
+		env.put("LD_LIBRARY_PATH", getContext().getFilesDir() + "/openjdk/lib:"
+		        + getContext().getFilesDir() + "/openjdk/lib/jli:" 
+				+ getContext().getFilesDir() + "/openjdk/lib/server:"
+				+ getContext().getFilesDir() + "/openjdk/lib/hm:");
 		addToEnvIfPresent(env, "ANDROID_ART_ROOT");
 		addToEnvIfPresent(env, "DEX2OATBOOTCLASSPATH");
 		addToEnvIfPresent(env, "ANDROID_I18N_ROOT");
@@ -103,12 +107,12 @@ public class KotlinCompiler extends Compiler {
     }
     
     private boolean isOpenJDKInstalled() {
-        File javaFile = new File(getContext().getFilesDir(), "openjdk/bin/java");
+        File javaFile = new File(getContext().getFilesDir(), "/openjdk/bin/java");
         return javaFile.exists();
     }
     
     private boolean isKotlinInstalled() {
-        File kotlinFile = new File(getContext().getFilesDir(), "kotlinc/lib/kotlin-compiler.jar");
+        File kotlinFile = new File(getContext().getFilesDir(), "/kotlinc/lib/kotlin-compiler.jar");
         return kotlinFile.exists();
     }
     
