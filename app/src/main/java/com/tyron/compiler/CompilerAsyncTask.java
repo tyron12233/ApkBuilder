@@ -17,6 +17,7 @@ import com.android.sdklib.build.SealedApkException;
 
 import com.apk.builder.R;
 import com.apk.builder.model.*;
+import com.apk.builder.apksigner.ApkSigner;
 import com.tyron.compiler.exception.*;
 import com.tyron.compiler.incremental.IncrementalECJCompiler;
 import com.tyron.compiler.incremental.IncrementalD8Compiler;
@@ -110,6 +111,12 @@ public class CompilerAsyncTask extends AsyncTask<Project, String, CompilerResult
 			}
 			builder.setDebugMode(false);
 			builder.sealApk();
+		        
+		        project.getLogger().d("APK Signerr", "Signing Apk");
+			
+			 //sign the app
+		        new ApkSigner(project,apkPath.getAbsolutePath(),binDir+"signed.apk",ApkSigner.Mode.TEST).sign();
+			
 			
 			long time = System.currentTimeMillis() - startTime;
 			

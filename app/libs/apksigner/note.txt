@@ -1,0 +1,1 @@
+This is a modified version of ApkSigner by RohitVerma which supports pre Oreo devices.
