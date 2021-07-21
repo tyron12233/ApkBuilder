@@ -29,6 +29,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.apk.builder.logger.Logger;
 import com.apk.builder.model.Library;
 import com.apk.builder.model.Project;
+import com.apk.builder.model.ProjectSettings;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 	private SwitchMaterial stringFog;
 	private SwitchMaterial r8;
 	private SwitchMaterial proguard;
+	private SwitchMaterial kotlin_switch;
 	private TextInputLayout proguardRules;
 	private TextView txt_output;
 	private MaterialCardView cardview;
@@ -189,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
 		java8 = findViewById(R.id.java8);
 		dx = findViewById(R.id.dx);
 		d8 = findViewById(R.id.d8);
+		kotlin_switch = findViewById(R.id.kotlin_switch);
 		proguardRulesPath = findViewById(R.id.proguardRulesPath);
 		recyclerview1 = findViewById(R.id.recyclerview1);
 		_drawer_base = _nav_view.findViewById(R.id.base);
@@ -238,12 +242,18 @@ public class MainActivity extends AppCompatActivity {
 			project.setJavaFile(new File(javaPath.getText().toString()));
 
 			project.setManifestFile(new File(manifestPath.getText().toString()));
-
+			project.setNativeLibraries(new File(nativeLibsPath.getText().toString()));
+			
 			if (!android.text.TextUtils.isEmpty(assetsPath.getText().toString())) {
 					project.setAssetsFile(new File(assetsPath.getText().toString()));
 			}
 			project.setLogger(mLogger);
 			project.setMinSdk(Integer.parseInt(minSdkValue.getText().toString()));
+			
+			ProjectSettings settings = new ProjectSettings();
+			settings.put(ProjectSettings.KOTLIN_ENABLED, kotlin_switch.isChecked());
+			project.setProjectSettings(settings);
+			
 			project.setTargetSdk(Integer.parseInt(maxSdkValue.getText().toString()));
 			CompilerAsyncTask task = new CompilerAsyncTask(MainActivity.this);
 
@@ -302,10 +312,12 @@ public class MainActivity extends AppCompatActivity {
 		manifestPath.setText(pref.getString("manifestPath", ""));
 		et_output.setText(pref.getString("outputPath", ""));
 		localLibsPath.setText(pref.getString("libPath", ""));
+		assetsPath.setText(pref.getString("assetsPath", ""));
 		nativeLibsPath.setText(pref.getString("nativeLibsPath", ""));
 	}
 	
 	
+	//TODO: improve
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -371,11 +383,17 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-	 	pref.edit().putString("resPath", Objects.requireNonNull(resPath.getText()).toString()).apply();
-		pref.edit().putString("javaPath", Objects.requireNonNull(javaPath.getText()).toString()).apply();
-		pref.edit().putString("manifestPath", Objects.requireNonNull(manifestPath.getText()).toString()).apply();
-		pref.edit().putString("outputPath", Objects.requireNonNull(et_output.getText()).toString()).apply();
-		pref.edit().putString("libPath", Objects.requireNonNull(localLibsPath.getText()).toString()).apply();
+		
+		SharedPreferences.Editor editor = pref.edit();
+		//fixme: why is there Objects.requireNonNull here?
+	 	editor.putString("resPath", Objects.requireNonNull(resPath.getText()).toString());
+		editor.putString("javaPath", Objects.requireNonNull(javaPath.getText()).toString());
+		editor.putString("manifestPath", Objects.requireNonNull(manifestPath.getText()).toString());
+		editor.putString("outputPath", Objects.requireNonNull(et_output.getText()).toString());
+		editor.putString("libPath", Objects.requireNonNull(localLibsPath.getText()).toString());
+		editor.putString("assetsPath", assetsPath.getText().toString());
+		editor.putString("nativeLibsPath", nativeLibsPath.getText().toString());
+		editor.commit();
 	}
 	
 	@Override
