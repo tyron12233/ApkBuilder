@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -227,6 +228,16 @@ public class MainActivity extends AppCompatActivity {
 			} else {
 				proguardRules.setVisibility(View.GONE);
 			}
+		});
+		
+		run.setOnLongClickListener((v) -> {
+		    Toast.makeText(MainActivity.this, "Compiler is now running on foreground", Toast.LENGTH_SHORT).show();
+		    
+		    Intent intent = new Intent(MainActivity.this, CompilerService.class);
+		    intent.setAction("start");
+		    startService(intent);
+		    
+		    return true;
 		});
 		
 		run.setOnClickListener(_view -> {

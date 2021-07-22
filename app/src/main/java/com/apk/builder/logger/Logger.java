@@ -33,6 +33,9 @@ public class Logger {
 	}
 	
 	public void d(String tag, String message) {
+	    if (mRecyclerView == null) {
+	        return;
+	    }
 		mRecyclerView.post(() -> {
 		    data.add(new Log(tag, message));
 	    	adapter.notifyItemInserted(data.size());
@@ -41,6 +44,9 @@ public class Logger {
 	}
 	
 	public void e(String tag,  String message) {
+	    if (mRecyclerView == null) {
+	        return;
+	    }
 		mRecyclerView.post(() -> {
 		    Spannable messageSpan = new SpannableString(message);
 		    messageSpan.setSpan(new ForegroundColorSpan(0xffff0000), 0, message.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -52,6 +58,9 @@ public class Logger {
 	}
 	
 	public void w(String tag,  String message) {
+	    if (mRecyclerView == null) {
+	        return;
+	    }
 		mRecyclerView.post(() -> {
 		    Spannable messageSpan = new SpannableString(message);
 		    messageSpan.setSpan(new ForegroundColorSpan(0xffff7043), 0, message.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -63,6 +72,9 @@ public class Logger {
 	}
 	
 	private void scroll() {
+	    if (mRecyclerView == null) {
+	        return;
+	    }
 		mRecyclerView.smoothScrollToPosition(data.size() - 1);
 	}
 }
