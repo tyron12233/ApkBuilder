@@ -22,6 +22,8 @@ public class AAPT2Compiler extends Compiler {
 	private Project mProject;
 	private final File mFilesDir;
 	private List<Library> mLibraries;
+	//we have a separate list to generate R.java for them but not recompile them
+	private List<Library> mLibrariesCopy;
     
     private File binDir;
     private File genDir;
@@ -42,9 +44,11 @@ public class AAPT2Compiler extends Compiler {
 		
 		mLibraries = new ArrayList<>();
         mLibraries.addAll(mProject.getLibraries());
+        mLibrariesCopy = new ArrayList<>(mLibraries);
 		
         binDir = new File(mProject.getOutputFile(), "bin");
         genDir = new File(mProject.getOutputFile(), "gen");
+        genDir.delete();
         
         for (Library library : new ArrayList<>(mLibraries)) {
             if (new File(binDir, "/res/" + library.getName() + ".zip").exists()) {
@@ -154,7 +158,7 @@ public class AAPT2Compiler extends Compiler {
 	   args.add(mProject.getManifestFile().getAbsolutePath());
 	   
 	   StringBuilder sb = new StringBuilder();
-	   for (Library library : mLibraries) {
+	   for (Library library : mLibrariesCopy) {
 		   if (library.requiresResourceFile()) {
 		       mProject.getLogger().d(TAG, "Adding extra package: " + library.getPackageName());
 			   sb.append(library.getPackageName());

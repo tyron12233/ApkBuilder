@@ -115,7 +115,7 @@ public class CompilerAsyncTask extends AsyncTask<Project, String, CompilerResult
 	        project.getLogger().d("APK Signer", "Signing APK");
 			
 			 //sign the app
-	        new ApkSigner(project,apkPath.getAbsolutePath(),binDir + "/signed.apk" , ApkSigner.Mode.TEST).sign();
+	        new ApkSigner(project, apkPath.getAbsolutePath(), binDir + "/signed.apk" , ApkSigner.Mode.TEST).sign();
 			
 			
 			long time = System.currentTimeMillis() - startTime;
