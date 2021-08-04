@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="cancel" type="string">Cancel</item>
+    <item name="copy" type="string">Copy</item>
+    <item name="cut" type="string">Cut</item>
+    <item name="last" type="string">Last</item>
+    <item name="next" type="string">Next</item>
+    <item name="paste" type="string">Paste</item>
+    <item name="replace" type="string">Replace</item>
+    <item name="replaceAll" type="string">Replace All</item>
+    <item name="replacement" type="string">Replacement</item>
+    <item name="selectAll" type="string">Select All</item>
+    <item name="text_to_search" type="string">Text to search</item>
+    <declare-styleable name="editor">
+        <attr format="string" name="text"/>
+        <attr format="dimension" name="textSize"/>
+        <attr format="dimension" name="dividerWidth"/>
+        <attr format="boolean" name="lineNumberVisible"/>
+        <attr format="boolean" name="autoCompleteEnabled"/>
+        <attr format="boolean" name="symbolCompletionEnabled"/>
+        <attr format="integer" name="cursorBlinkPeriod"/>
+        <attr format="boolean" name="scrollbarsEnabled"/>
+        <attr format="boolean" name="verticalScrollbarEnabled"/>
+        <attr format="boolean" name="horizontalScrollbarEnabled"/>
+    </declare-styleable>
+</resources>

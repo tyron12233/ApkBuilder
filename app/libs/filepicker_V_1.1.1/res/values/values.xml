@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorAccent">#3F51B5</color>
+    <color name="colorHeader">@color/colorPrimary</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="textColorSecondary">#FFFFFF</color>
+    <declare-styleable name="FilePickerPreference"><attr format="enum" name="selection_mode">
+            <enum name="single_mode" value="0"/>
+            <enum name="multi_mode" value="1"/>
+        </attr><attr format="enum" name="selection_type">
+            <enum name="file_select" value="0"/>
+            <enum name="dir_select" value="1"/>
+            <enum name="file_dir_select" value="2"/>
+        </attr><attr format="string" name="root_dir"/><attr format="string" name="error_dir"/><attr format="string" name="offset_dir"/><attr format="string" name="extensions"/><attr format="string" name="title_text"/></declare-styleable>
+    <dimen name="activity_margin">4dp</dimen>
+    <dimen name="checkbox_dimens">24dp</dimen>
+    <dimen name="checkbox_margin">8dp</dimen>
+    <dimen name="toolbar_image_margin">16dp</dimen>
+    <string name="cancel_button_label">Cancel</string>
+    <string name="choose_button_label">Select</string>
+    <string name="default_dir" translatable="false">/sdcard</string>
+    <string name="error_dir_access">Directory cannot be accessed</string>
+    <string name="label_parent_dir" translatable="false">...</string>
+    <string name="label_parent_directory">Parent Directory</string>
+    <string name="last_edit">Last edited: </string>
+</resources>
