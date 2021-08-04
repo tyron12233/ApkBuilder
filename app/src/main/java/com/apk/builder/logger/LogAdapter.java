@@ -6,16 +6,47 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.FrameLayout;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.DiffUtil;
 import android.text.SpannableStringBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LogAdapter extends RecyclerView.Adapter<LogAdapter.ViewHolder> {
     
-	private List<Log> mData;
+	private final List<Log> mData = new ArrayList<>();
 	
-	public LogAdapter(List<Log> data) {
-		mData = data;
+	public LogAdapter() {
+		
+	}
+	
+	public void submitList(List<Log> newData) {
+	    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+	        @Override
+	        public int getOldListSize() {
+	            return mData.size();
+	        }
+	        
+	        @Override
+	        public int getNewListSize() {
+	            return newData.size();
+	        }
+	        
+	        @Override
+	        public boolean areItemsTheSame(int oldPos, int newPos) {
+	            return mData.get(oldPos).getMessage().equals(newData.get(newPos));
+	        }
+	        
+	        @Override
+	        public boolean areContentsTheSame(int oldPos, int newPos) {
+                return mData.get(oldPos).getMessage().equals(newData.get(newPos));
+	        }
+	    });
+	    
+	    mData.clear();
+	    mData.addAll(newData);
+	    
+	    diffResult.dispatchUpdatesTo(this);
 	}
 	
 	@Override
