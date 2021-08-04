@@ -12,6 +12,7 @@ import android.text.InputFilter;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -25,12 +26,21 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apk.builder.logger.Logger;
+import com.apk.builder.logger.LogAdapter;
+import com.apk.builder.logger.LogViewModel;
+
 import com.apk.builder.model.Library;
 import com.apk.builder.model.Project;
 import com.apk.builder.model.ProjectSettings;
+import com.apk.builder.util.JDKInstallTask;
+import com.apk.builder.util.KotlinInstallTask;
+
+import com.tyron.ide.editor.CodeEditorFragment;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.button.MaterialButton;
@@ -40,12 +50,18 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.tyron.compiler.CompilerAsyncTask;
-
+import com.github.angads25.filepicker.controller.DialogSelectionListener;
+import com.github.angads25.filepicker.model.DialogConfigs;
+import com.github.angads25.filepicker.model.DialogProperties;
+import com.github.angads25.filepicker.view.FilePickerDialog;
 import java.io.File;
 import java.util.Objects;
+import java.util.Map;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
-
+    
+    //TODO: remove unused fields
 	private Toolbar _toolbar;
 	private AppBarLayout _app_bar;
 	private CoordinatorLayout _coordinator;
@@ -111,16 +127,24 @@ public class MainActivity extends AppCompatActivity {
 	private ImageView _drawer_imageview4;
 	private TextView _drawer_textview4;
 	
+	private MaterialButton install_kotlin;
+	private MaterialButton install_jdk;
+	
 	private SharedPreferences pref;
 	private Logger mLogger;
+	
+	public interface ActivityResultCallback {
+	    void onActivityResult(Intent intent);
+	}
+	
+	private Map<Integer, ActivityResultCallback> callbackMap = new HashMap<>();
 	
 	@Override
 	protected void onCreate(Bundle _savedInstanceState) {
 		super.onCreate(_savedInstanceState);
 		setContentView(R.layout.main);
 		initialize(_savedInstanceState);
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
-		|| ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+		if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
 			ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
 		}
 		else {
@@ -210,6 +234,10 @@ public class MainActivity extends AppCompatActivity {
 		_drawer_textview3 = _nav_view.findViewById(R.id.textview3);
 		_drawer_imageview4 = _nav_view.findViewById(R.id.imageview4);
 		_drawer_textview4 = _nav_view.findViewById(R.id.textview4);
+		
+		install_jdk = findViewById(R.id.install_jdk);
+		install_kotlin = findViewById(R.id.install_kotlin);
+		
 		pref = getSharedPreferences("config", Activity.MODE_PRIVATE);
 		
 		material.setOnCheckedChangeListener((param1, param2) -> {
@@ -231,12 +259,11 @@ public class MainActivity extends AppCompatActivity {
 		});
 		
 		run.setOnLongClickListener((v) -> {
-		    Toast.makeText(MainActivity.this, "Compiler is now running on foreground", Toast.LENGTH_SHORT).show();
-		    
-		    Intent intent = new Intent(MainActivity.this, CompilerService.class);
-		    intent.setAction("start");
-		    startService(intent);
-		    
+		  		    
+		    getSupportFragmentManager()
+		            .beginTransaction()
+		                    .replace(R.id.test_fragment_container, CodeEditorFragment.newInstance("/storage/emulated/0/.1TapSlide/GradleTest/test/src/com/Main.java"))
+		                    .commit();
 		    return true;
 		});
 		
@@ -277,46 +304,120 @@ public class MainActivity extends AppCompatActivity {
 		proguardRules.setVisibility(View.GONE);
 		minSdkValue.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "30")});
 		maxSdkValue.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "30")});
-
+		
+		//FIXME: codes below won't work if the user selected the downloads folder
 		res.setEndIconOnClickListener(v -> {
 			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 			i.addCategory(Intent.CATEGORY_DEFAULT);
+			callbackMap.put(0, (data) -> {
+			    Uri uri = data.getData(); 
+    		    File file = new File(uri.getPath());
+    		    final String[] split = file.getPath().split(":");
+    		    resPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+			});
 			startActivityForResult(Intent.createChooser(i, "Choose directory"), 0);
 		});
 		java.setEndIconOnClickListener(v -> {
 			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 			i.addCategory(Intent.CATEGORY_DEFAULT);
+			callbackMap.put(1, (data) -> {
+			    Uri uri = data.getData(); 
+    		    File file = new File(uri.getPath());
+    		    final String[] split = file.getPath().split(":");
+    		    javaPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+			});
 			startActivityForResult(Intent.createChooser(i, "Choose directory"), 1);
 		});
 		manifest.setEndIconOnClickListener(v -> {
 			Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
 			chooseFile.setType("text/xml");
 			chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+			callbackMap.put(2, (data) -> {
+			    Uri uri = data.getData(); 
+    		    File file = new File(uri.getPath());
+    		    final String[] split = file.getPath().split(":");
+    		    manifestPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+			});
 			startActivityForResult(chooseFile, 2);
 		});
 		assets.setEndIconOnClickListener(v -> {
 			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 			i.addCategory(Intent.CATEGORY_DEFAULT);
+			callbackMap.put(3, (data) -> {
+			    Uri uri = data.getData(); 
+    		    File file = new File(uri.getPath());
+    		    final String[] split = file.getPath().split(":");
+    		    assetsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+			});
 			startActivityForResult(Intent.createChooser(i, "Choose directory"), 3);
 		});
 		nativeLibs.setEndIconOnClickListener(v -> {
 			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 			i.addCategory(Intent.CATEGORY_DEFAULT);
+			callbackMap.put(4, (data) -> {
+			    Uri uri = data.getData(); 
+    		    File file = new File(uri.getPath());
+    		    final String[] split = file.getPath().split(":");
+    		    nativeLibsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+			});
 			startActivityForResult(Intent.createChooser(i, "Choose directory"), 4);
 		});
 		localLibs.setEndIconOnClickListener(v -> {
 			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 			i.addCategory(Intent.CATEGORY_DEFAULT);
+			callbackMap.put(5, (data) -> {
+			    Uri uri = data.getData(); 
+    		    File file = new File(uri.getPath());
+    		    final String[] split = file.getPath().split(":");
+    		    localLibsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+			});
 			startActivityForResult(Intent.createChooser(i, "Choose directory"), 5);
 		});
 		til_output.setEndIconOnClickListener(v -> {
 			Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 			i.addCategory(Intent.CATEGORY_DEFAULT);
+			callbackMap.put(6, (data) -> {
+			    Uri uri = data.getData(); 
+    		    File file = new File(uri.getPath());
+    		    final String[] split = file.getPath().split(":");
+    		    et_output.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
+			});
 			startActivityForResult(Intent.createChooser(i, "Choose directory"), 6);
 		});
 		
+		install_jdk.setOnClickListener((v) -> {
+		    JDKInstallTask task = new JDKInstallTask(v.getContext(), mLogger);
+		    
+		    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+		    i.setType("*/*");
+		    callbackMap.put(203, (data) -> {
+		        task.execute(data.getData());
+		    });
+		    startActivityForResult(Intent.createChooser(i, "Choose JDK"), 203);
+		});
+		
+		install_kotlin.setOnClickListener((v) -> {
+		    KotlinInstallTask task = new KotlinInstallTask(v.getContext());
+		    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+		    i.setType("*/*");
+		    callbackMap.put(204, (data) -> {
+		        task.execute(data.getData());
+		    });
+		    startActivityForResult(Intent.createChooser(i, "Choose KOTLIN"), 204);
+		});
+		
+		LogAdapter logAdapter = new LogAdapter();
+		recyclerview1.setLayoutManager(new LinearLayoutManager(this));	
+		recyclerview1.setAdapter(logAdapter);
+		
+	    LogViewModel model = new ViewModelProvider(this).get(LogViewModel.class);
+	    model.getLogs().observe(this, (data) -> {
+	        logAdapter.submitList(data);
+	        recyclerview1.smoothScrollToPosition(data.size() - 1);
+	    });
+	    
 		mLogger = new Logger();
-		mLogger.attach(recyclerview1);
+		mLogger.attach(this);
 		
 		resPath.setText(pref.getString("resPath", ""));
 		javaPath.setText(pref.getString("javaPath", ""));
@@ -328,65 +429,14 @@ public class MainActivity extends AppCompatActivity {
 	}
 	
 	
-	//TODO: improve
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(resultCode == Activity.RESULT_OK) {
-		    switch (requestCode) {
-		case ((int)0): {
-		    Uri uri = data.getData(); 
-		    File file = new File(uri.getPath());
-		    final String[] split = file.getPath().split(":");
-		    resPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		    break;
-		}
-		case ((int)1): {
-		    Uri uri = data.getData(); 
-		    File file = new File(uri.getPath());
-		    final String[] split = file.getPath().split(":");
-		    javaPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		    break;
-		}	
-	        case ((int)2): {
-	            Uri uri = data.getData(); 
-		    File file = new File(uri.getPath());
-		    final String[] split = file.getPath().split(":");
-		    manifestPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		    break;
-		}
-		case ((int)3): {
-		    Uri uri = data.getData(); 
-		    File file = new File(uri.getPath());
-		    final String[] split = file.getPath().split(":");
-		    assetsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		    break;
-		}
-		case ((int)4): {
-		    Uri uri = data.getData(); 
-		    File file = new File(uri.getPath());
-		    final String[] split = file.getPath().split(":");
-		    nativeLibsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		    break;
-		}
-		case ((int)5): {
-		    Uri uri = data.getData(); 
-		    File file = new File(uri.getPath());
-		    final String[] split = file.getPath().split(":");
-		    localLibsPath.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		break;
-		}
-		case (6): {
-		    Uri uri = data.getData(); 
-		    File file = new File(uri.getPath());
-		    final String[] split = file.getPath().split(":");
-		    et_output.setText(FileUtil.getExternalStorageDir().concat("/").concat(split[1]));
-		    break;
-		}
-	}
-			
-
-
+		    ActivityResultCallback cb = callbackMap.get(requestCode);
+		    if (cb != null) {
+		        cb.onActivityResult(data);
+		    }
 		}
 	}
 	
