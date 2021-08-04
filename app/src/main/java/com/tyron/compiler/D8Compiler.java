@@ -16,6 +16,8 @@ public class D8Compiler extends Compiler {
 	
     private Project mProject;
     
+    private List<String> classpath;
+    
     public D8Compiler(Project project) {
         mProject = project;
     }
@@ -133,16 +135,33 @@ public class D8Compiler extends Compiler {
 		mProject.getLogger().d(TAG, "Library " + library.getName() + " does not have a dex file, generating one");
 		
 		List<String> args = new ArrayList<>();
+		args.add(library.getClassJarFile().getAbsolutePath());
 		args.add("--release");
         args.add("--min-api"); 
         args.add(String.valueOf(mProject.getMinSdk()));
 		args.add("--lib");
 		args.add(getAndroidJarFile().getAbsolutePath());
-		args.add("--output");
-		args.add(library.getPath().getAbsolutePath());
-		args.add(library.getClassJarFile().getAbsolutePath());
-	
+		args.add("--output");	
+		args.add(library.getPath().getAbsolutePath());	
+		args.addAll(classpath());
+		
         D8.main(args.toArray(new String[0]));
         
+	}
+	
+	public List<String> classpath() {
+	    if (classpath != null) {
+	        return classpath;
+	    }
+	    
+	    classpath = new ArrayList<>();
+	    
+	    
+	    for (Library library : mProject.getLibraries()) {
+	        classpath.add("--classpath");	       	        
+	        classpath.add(library.getClassJarFile().getAbsolutePath());	       
+	    }
+	    	   
+	    return classpath;
 	}
 }

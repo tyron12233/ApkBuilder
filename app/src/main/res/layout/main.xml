@@ -451,7 +451,7 @@
 						android:padding="8dp"
 						android:orientation="vertical">
 						<com.google.android.material.button.MaterialButton
-							android:id="@+id/linear2"
+							android:id="@+id/install_jdk"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
 							android:padding="8dp"
@@ -502,7 +502,15 @@
 						android:orientation="horizontal"
 						android:text="@string/run"
 						android:textColor="@color/colorOnSurface" />
+						
+							<FrameLayout
+                    android:id="@+id/test_fragment_container"
+                    android:layout_height="300dp"
+                    android:layout_width="match_parent"
+                    />
 				</LinearLayout>
+				
+			
 			</ScrollView>
 		</LinearLayout>
 	</androidx.coordinatorlayout.widget.CoordinatorLayout>

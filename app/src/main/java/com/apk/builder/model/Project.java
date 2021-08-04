@@ -19,9 +19,9 @@ public class Project {
 	
 	private int mTargetSdk;
 	
-	private int mVersionCode = 3;
+	private int mVersionCode = 1;
 	
-	private String mVersionName = "Sketchub 3.0";
+	private String mVersionName = "1.0";
 	
 	private List<Library> mLibraries;
 	

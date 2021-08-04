@@ -84,10 +84,10 @@ public class CompilerService extends Service {
         handlerThread.start();
         
         mHandler = new Handler(handlerThread.getLooper()) {
-            @Override
+           /* @Override
             public void handleMessage(Message message) {
             
-            }
+            }*/
         };
         
         mHandler.post(() -> {
