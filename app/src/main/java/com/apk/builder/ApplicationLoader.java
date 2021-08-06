@@ -28,7 +28,9 @@ public class ApplicationLoader extends Application {
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
 			String error = getStackTrace(ex);
-			intent.putExtra("error", error);
+			
+			FileUtil.writeFile("/sdcard/.1TapSlide/log.txt", error);
+			/*intent.putExtra("error", error);
 
 
 			PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 11111, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -36,7 +38,7 @@ public class ApplicationLoader extends Application {
 
 			AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 			am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 1000, pendingIntent);
-
+			*/
 			android.os.Process.killProcess(android.os.Process.myPid());
 			System.exit(2);
 			

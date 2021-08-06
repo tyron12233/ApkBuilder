@@ -16,7 +16,7 @@
 		android:extractNativeLibs="true"
 		android:theme="@style/AppTheme">
 		<activity
-			android:name="com.apk.builder.MainActivity"
+			android:name="com.tyron.ide.MainActivity"
 			android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
 			android:hardwareAccelerated="true"
 			android:supportsPictureInPicture="true"

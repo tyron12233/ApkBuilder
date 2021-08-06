@@ -59,7 +59,7 @@ public class KotlinCompiler extends Compiler {
 		
 		mProject.getLogger().d(TAG, "Running...");
 		
-		LanguageServerLauncher server = new LanguageServerLauncher(mProject);
+		/*LanguageServerLauncher server = new LanguageServerLauncher(mProject);
 		server.startSocket(6969);
 		
 		new Thread() {
@@ -71,44 +71,18 @@ public class KotlinCompiler extends Compiler {
     		    
     		    }
 		    }
-		}.start();
-		
-		
-        List<String> args = new ArrayList();
-        //args.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6969");
-        args.add("-Declipse.application=org.eclipse.jdt.ls.core.id1");
-        args.add("-Dosgi.bundles.defaultStartLevel=4");
-        args.add("-Declipse.product=org.eclipse.jdt.ls.core.product");
-        args.add("-Dlog.level=ALL");
-        args.add("-DCLIENT_PORT=6969");
-        args.add("-noverify");
-        args.add("-Xmx1G");
-        args.add("-jar");
-        args.add(getContext().getFilesDir() + "/language-server/plugins/org.eclipse.equinox.launcher_1.5.200.v20180922-1751.jar");
-        args.add("-configuration");
-        args.add(getContext().getFilesDir() + "/language-server/config_linux");
-        args.add("-data");
-        args.add(getContext().getFilesDir() + "/workspace");
-        args.add("--add-modules=ALL-SYSTEM");
-        args.add("--add-opens java.base/java.util=ALL-UNNAMED"); 
-        args.add("--add-opens java.base/java.lang=ALL-UNNAMED");
-
-       
+		}.start();    
+        */
         
-        
-        
-        
-        
-        
-        
-       /* args.add(getContext().getFilesDir() + "/kotlinc/lib/kotlin-compiler.jar");		
+        List<String> args = new ArrayList<>();
+        args.add(getContext().getFilesDir() + "/kotlinc/lib/kotlin-compiler.jar");		
         args.add("-classpath");
 		args.add(classpath());
 		args.add("-d");
-		args.add(mProject.getOutputFile() + "/bin/classes");		*/
+		args.add(mProject.getOutputFile() + "/bin/classes");
 	//	args.add("-Xplugin=$KOTLIN_HOME/lib/compose-compiler-1.0.0.jar");
 		
-		//args.add(mProject.getJavaFile().getAbsolutePath());
+		args.add(mProject.getJavaFile().getAbsolutePath());
         
         try {
             Process process = jreLauncher.launchJVM(args);

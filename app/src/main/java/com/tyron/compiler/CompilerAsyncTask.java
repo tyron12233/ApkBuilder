@@ -52,12 +52,12 @@ public class CompilerAsyncTask extends AsyncTask<Project, String, CompilerResult
 	    Project project = params[0];
 	    try {
 			
-	        Compiler aapt2Compiler = new AAPT2Compiler(project);
+	        /*Compiler aapt2Compiler = new AAPT2Compiler(project);
 			aapt2Compiler.setProgressListener(args -> {
 				publishProgress(args);
 			});
 	        aapt2Compiler.prepare();
-	        aapt2Compiler.run();
+	        aapt2Compiler.run();*/
 	        
 			if (project.getSettings().getBoolean(ProjectSettings.KOTLIN_ENABLED)) {
 			    Compiler kotlinCompiler = new KotlinCompiler(project);

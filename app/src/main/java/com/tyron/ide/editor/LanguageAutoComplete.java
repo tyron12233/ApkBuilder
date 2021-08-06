@@ -36,7 +36,6 @@ public class LanguageAutoComplete implements AutoCompleteProvider {
         List<CompletionItem> keywords = new ArrayList<>();
         int column = mEditor.getCursor().getLeftColumn();
         
-       // notifyItemChanged(line, mEditor.getCursor().getLeftLine(), column - prefix.length(), column, prefix.length(), prefix);
         try {
             CompletableFuture<Either<List<org.eclipse.lsp4j.CompletionItem>, CompletionList>> future = LanguageServerLauncher.getInstance().getServer()
                     .getTextDocumentService()
@@ -67,32 +66,4 @@ public class LanguageAutoComplete implements AutoCompleteProvider {
         return keywords;
     }
     
-    private void notifyItemChanged(int startLine, int endLine, int startColumn, int endColumn, int length, CharSequence text) {
-                LanguageServerLauncher.getInstance().getServer()
-                        .getTextDocumentService()
-                                .didChange(
-                                    new DidChangeTextDocumentParams(
-                                        new VersionedTextDocumentIdentifier(
-                                            mEditor.getPath().toURI().toString(),
-                                            12
-                                        ),
-                                        new ArrayList<>(Arrays.asList(
-                                            new TextDocumentContentChangeEvent(
-                                                new Range(
-                                                    new Position(
-                                                        startLine,
-                                                        startColumn
-                                                    ),
-                                                    new Position(
-                                                        endLine,
-                                                        endColumn
-                                                    )                                                                                                   
-                                                ),
-                                                length,
-                                                text.toString()
-                                            )
-                                        ))
-                                    )
-                                );
-    }
 }

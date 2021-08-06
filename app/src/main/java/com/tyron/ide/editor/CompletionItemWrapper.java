@@ -12,17 +12,17 @@ public class CompletionItemWrapper extends CompletionItem {
     private List<TextEdit> additionalTextEdits;
     
     public static CompletionItemWrapper from(org.eclipse.lsp4j.CompletionItem item) {
-        CompletionItemWrapper wrapper = new CompletionItemWrapper(item.getLabel(), item.getDetail());
+        CompletionItemWrapper wrapper = new CompletionItemWrapper(item.getLabel(), item.getInsertText(), item.getDetail());
         
         wrapper.additionalTextEdits = item.getAdditionalTextEdits();
         return wrapper;
     }
     
-    public CompletionItemWrapper(String label, String desc) {
-        super(label, desc);
+    public CompletionItemWrapper(String label, String commit, String desc) {
+        super(label, commit, desc);
     }
     
-    private List<TextEdit> getAdditionalTextEdit() {
+    public List<TextEdit> getAdditionalTextEdits() {
         return additionalTextEdits;
     }
 }

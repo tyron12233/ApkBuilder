@@ -8,12 +8,20 @@ import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.EditText;
 import android.text.Selection;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.UnderlineSpan;
 import androidx.fragment.app.Fragment;
 
 import com.apk.builder.FileUtil;
 import com.tyron.compiler.util.LanguageServerLauncher;
+import com.tyron.ide.util.AndroidUtilities;
 
 import io.github.rosemoe.editor.widget.CodeEditor;
+import io.github.rosemoe.editor.struct.Span;
+import io.github.rosemoe.editor.text.TextAnalyzeResult;
+import io.github.rosemoe.editor.text.LineNumberCalculator;
+
 import io.github.rosemoe.editor.interfaces.EditorEventListener;
 
 import java.io.File;
@@ -108,9 +116,7 @@ public class CodeEditorFragment extends Fragment {
                                             12
                                         ),
                                         new ArrayList<>(Arrays.asList(
-                                            new TextDocumentContentChangeEvent(
-                                                
-                                                
+                                            new TextDocumentContentChangeEvent(                                                                                                                                                                                       
                                                 text.toString()
                                             )
                                         ))
@@ -122,14 +128,58 @@ public class CodeEditorFragment extends Fragment {
                 
             }
         });
+        
+        LanguageServerLauncher.getInstance().getLanguageClient()
+                .addPublishDiagnosticsListener(codeView.getPath(), (params) -> {
+                    TextAnalyzeResult result = new TextAnalyzeResult();
+                    result.addNormalIfNull();
+                    
+                    LineNumberCalculator helper = new LineNumberCalculator(codeView.getText());
+                    
+                    List<Diagnostic> diagnostics = params.getDiagnostics();
+                    
+                    for (Diagnostic diagnostic : diagnostics) {
+                        Diagnostic diagnostic = diagnostics.get(i);
+                        DiagnosticSeverity severity = diagnostic.getSeverity();
+                        Range range = diagnostic.getRange();
+                        Position start = range.getStart();
+                        Position end = range.getEnd();
+                        
+                        Span startSpan = Span.obtain(start.getCharacter(), 24);
+                        Span endSpan = Span.obtain(end.getCharacter(), 5);
+                        
+                        
+                        switch (severity) {
+                            case Error :
+                                
+                                startSpan.setUnderlineColor(0xffff0000);
+                                result.add(start.getLine(), startSpan);
+                                result.add(end.getLine(), endSpan);
+                                break;
+                            case Warning :
+                                startSpan.setUnderlineColor(0xffffff00);                      
+                                endSpan.setUnderlineColor(0xffffff00);
+                                result.add(start.getLine(), startSpan);
+                                break;
+                        }
+                    }
+                    result.determine(helper.getLine());
+                    codeView.getCustomTextAnalyzer().analyzeFromServer(result);                                                            
+                });
     }
     
     @Override
     public void onDestroy() {
         super.onDestroy();
         
-        new Thread(() -> {
-        LanguageServerLauncher.getInstance().getServer()
+        LanguageServerLauncher.getInstance().getLanguageClient()
+                .removePublishDiagnosticsListener(codeView.getPath());
+                
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        service.submit(new Runnable() {
+            @Override 
+            public void run() {
+                LanguageServerLauncher.getInstance().getServer()
                 .getTextDocumentService()
                         .willSave(
                             new WillSaveTextDocumentParams(
@@ -137,35 +187,25 @@ public class CodeEditorFragment extends Fragment {
                                 TextDocumentSaveReason.Manual
                             )
                         );
-        }).start();
-              
-        ExecutorService service = Executors.newSingleThreadExecutor();
-        service.submit(new Runnable() {
-            @Override 
-            public void run() {
+                        
                 FileUtil.writeFile(getArguments().getString("path"), codeView.getText().toString());
-                
                 LanguageServerLauncher.getInstance().getServer()
                         .getTextDocumentService()
-                        .didSave(
-                            new DidSaveTextDocumentParams(
-                                new TextDocumentIdentifier(new File(getArguments().getString("path")).toURI().toString())
-                            )
-                        );                                                                             
-            }
-        });
-        
-        new Thread(() -> {
-        LanguageServerLauncher.getInstance().getServer()
+                            .didSave(
+                                new DidSaveTextDocumentParams(
+                                    new TextDocumentIdentifier(new File(getArguments().getString("path")).toURI().toString())
+                                )
+                            );                
+                            
+                LanguageServerLauncher.getInstance().getServer()
                 .getTextDocumentService()
                         .didClose(
                             new DidCloseTextDocumentParams(
                                 new TextDocumentIdentifier(new File(getArguments().getString("path")).toURI().toString())
                             )
-                        );
-                        
-                        }).start();
-                        
+                        );                                                             
+            }
+        });                
     }
     
     private void setText(String path) {
